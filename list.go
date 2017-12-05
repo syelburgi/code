@@ -9,17 +9,14 @@ type node struct {
 	next *node
 }
 
+//Linked List Struct
 type List struct {
 	head *node
-	len  int
+	size int
 }
 
-func Helloworld() bool {
-	fmt.Println("hello world")
-	return true
-}
-
-func NewList() (*List, bool) {
+//Create list
+func New() (*List, bool) {
 	l := new(List)
 
 	if l == nil {
@@ -29,21 +26,40 @@ func NewList() (*List, bool) {
 	return l, true
 }
 
-func (l *List) Addtolist(d interface{}) {
-	l.head = &node{d, l.head}
-	l.len++
+func (n *node) searchnode(d interface{}) bool {
+	if n == nil {
+		return false
+	} else if n.data == d {
+		return true
+	} else {
+		return n.next.searchnode(d)
+	}
 }
 
-func (l *List) Removefromlist(d interface{}) bool {
-	if l.len > 0 {
+//Search the list
+func (l *List) Search(d interface{}) bool {
+	return l.head.searchnode(d)
+}
+
+//Insert to the List
+func (l *List) Insert(d interface{}) bool {
+
+	l.head = &node{d, l.head}
+	l.size++
+	return true
+}
+
+//Delete from the list
+func (l *List) Delete(d interface{}) bool {
+	if l.size > 0 {
 		n := l.head
-		var prev *node = nil
+		var prev *node
 
 		for n != nil {
 			if n.data == d {
 				if prev != nil {
 					prev.next = n.next
-					l.len--
+					l.size--
 				} else {
 					l.head = n.next
 				}
@@ -56,6 +72,7 @@ func (l *List) Removefromlist(d interface{}) bool {
 	return false
 }
 
+//Print the list
 func (l *List) Print() (int, error) {
 
 	n := l.head
@@ -65,5 +82,5 @@ func (l *List) Print() (int, error) {
 		n = n.next
 	}
 
-	return l.len, nil
+	return l.size, nil
 }
