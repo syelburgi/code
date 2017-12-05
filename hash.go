@@ -1,15 +1,15 @@
 package hash
 
 import "myalgorithms/list"
+import "fmt"
 
 type bucket struct {
 	key  interface{}
 	data *lists.List
 }
 
-type hashalgo interface {
-	getHashKey(d interface{}) int
-}
+//function pointer
+type Hashalgo func(d interface{}) int
 
 var index int
 
@@ -17,20 +17,25 @@ var index int
 type Hashbucket struct {
 	size int
 	b    []bucket
-	hashalgo
+	fn   Hashalgo
 }
 
 func (h *Hashbucket) getHashKey(d interface{}) int {
-	index = index % (len(h.b) - 1)
-	index++
-	return index
+
+	if h.fn == nil {
+		index++
+		index = index % len(h.b)
+		return index
+	}
+	return h.fn(d)
+
 }
 
-func Newhashtable(len int, algo hashalgo) *Hashbucket {
+func Newhashtable(len int, algo Hashalgo) *Hashbucket {
 	return &Hashbucket{
-		b:        make([]bucket, len),
-		size:     0,
-		hashalgo: algo,
+		b:    make([]bucket, len),
+		size: 0,
+		fn:   algo,
 	}
 }
 
@@ -58,4 +63,11 @@ func (h *Hashbucket) Delete(d interface{}) bool {
 	key := h.getHashKey(d)
 
 	return h.b[key].data.Delete(d)
+}
+
+func (h *Hashbucket) Print() {
+	for i, b := range h.b {
+		fmt.Println("bucket ", i)
+		b.data.Print()
+	}
 }
