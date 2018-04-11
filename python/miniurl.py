@@ -6,11 +6,11 @@ import re
 url_list = ["www.google.com",
             "www.yahoo.com",
             "www.vihal.com",
-            "www.sandeep.com",
-            ""
+            "www.sandeep.com"
             ]
 
-char_map = set(set([str(c) for c in range(0, 10)]) | set([s for s in string.ascii_lowercase]) | set([s for s in string.ascii_uppercase]))
+char_map = [str(c) for c in range(0, 10)] + [s for s in string.ascii_lowercase] + [s for s in string.ascii_uppercase]
+
 
 def fetch_the_url(url):
     global url_list
@@ -19,8 +19,10 @@ def fetch_the_url(url):
         index = url_list.index(url)
         return index
     except ValueError:
-        print("url not found in db")
-        return -1
+        url_list.append(url)
+        index = url_list.index(url)
+        print("url %s newly added" % url)
+        return index
     except Exception as e:
         print("fetch the url failed %s", e)
         return -1
@@ -29,11 +31,11 @@ def index_2_murl(index):
     murl = ""
 
     if index == 0:
-        return str(list(char_map)[0])
+        return char_map[0]
 
     while index:
         index, remain = divmod(index, len(char_map))
-        murl = str(list(char_map)[remain]) + murl
+        murl = char_map[remain] + murl
 
     return murl
 
@@ -64,7 +66,7 @@ def miniurl_2_url(miniurl):
         i = 0
         val = 0
         for c in domain:
-            index = list(char_map).index(c)
+            index = char_map.index(c)
             val += index * math.pow(len(char_map), i)
             i += 1
 
